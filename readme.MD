@@ -6,11 +6,11 @@ You should really be using the [built-in OBS Virtual Camera](https://obsproject.
 
 ![CI Windows Release](../../workflows/CI%20Windows%20Release/badge.svg) ![CI Windows On-Push](../../workflows/CI%20Windows%20On-Push/badge.svg)
 
-obs-virutalcam is a plugin for obs-studio , transforming the output video to a virtual directshow device.
+obs-virtualcam is a plugin for obs-studio, transforming the output video to a virtual directshow device.
 
 **Supported Platforms** : Windows 10+
 
-**Supported OBS Studio version** : 28.0.0+
+**Supported OBS Studio version** : 28.0.0 - 31.1.2
 
 # Features
 
