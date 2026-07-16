@@ -9,6 +9,10 @@
 #define MAPPING_NAMEV2 "OBSVirtualVideo2"
 #define MAPPING_NAMEV3 "OBSVirtualVideo3"
 #define MAPPING_NAMEV4 "OBSVirtualVideo4"
+#define MAPPING_NAMEV5 "OBSVirtualVideo5" // ★ added
+#define MAPPING_NAMEV6 "OBSVirtualVideo6" // ★ added
+#define MAPPING_NAMEV7 "OBSVirtualVideo7" // ★ added
+#define MAPPING_NAMEV8 "OBSVirtualVideo8" // ★ added
 #define MAPPING_NAMEA  "OBSVirtualAudio"
 
 typedef signed char        int8_t;
@@ -25,7 +29,11 @@ enum {
 	ModeVideo2 = 1,
 	ModeVideo3 = 2,
 	ModeVideo4 = 3,
-	ModeAudio = 5,
+	ModeVideo5 = 4, // ★ added
+	ModeVideo6 = 5, // ★ added
+	ModeVideo7 = 6, // ★ added
+	ModeVideo8 = 7, // ★ added
+	ModeAudio = 8,  // ★ changed 5 -> 8 (avoid collision with new video modes)
 };
 
 enum {
@@ -73,6 +81,10 @@ inline const char* get_mapping_name(int mode)
 		case ModeVideo2:   return MAPPING_NAMEV2;
 		case ModeVideo3:   return MAPPING_NAMEV3;
 		case ModeVideo4:   return MAPPING_NAMEV4;
+		case ModeVideo5:   return MAPPING_NAMEV5; // ★ added
+		case ModeVideo6:   return MAPPING_NAMEV6; // ★ added
+		case ModeVideo7:   return MAPPING_NAMEV7; // ★ added
+		case ModeVideo8:   return MAPPING_NAMEV8; // ★ added
 		case ModeAudio:    return MAPPING_NAMEA;
 		default:           return NULL;
 	}
