@@ -1,4 +1,4 @@
-﻿name: "CI Windows On-Push"
+name: "CI Windows On-Push"
 
 on:
   workflow_dispatch: #  Allows manual builds
@@ -17,18 +17,16 @@ jobs:
       OBS_DEPS: "2023-04-12"
       CMAKE_GENERATOR: "Visual Studio 17 2022"
       CMAKE_SYSTEM_VERSION: "10.0"
-      # TODO: Don't ACTIONS_ALLOW_UNSECURE_COMMANDS
-      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
       - name: "Add msbuild to PATH"
-        uses: microsoft/setup-msbuild@v1.0.0
+        uses: microsoft/setup-msbuild@v2
       - name: "Checkout"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: ${{ github.workspace }}/obs-virtual-cam
           submodules: "recursive"
       - name: "Checkout OBS"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: obsproject/obs-studio
           path: ${{ github.workspace }}/obs-studio
@@ -38,9 +36,9 @@ jobs:
         working-directory: ${{ github.workspace }}/obs-studio
         run: |
           git fetch --prune --unshallow
-          echo ::set-env name=OBS_GIT_BRANCH::$(git rev-parse --abbrev-ref HEAD)
-          echo ::set-env name=OBS_GIT_HASH::$(git rev-parse --short HEAD)
-          echo ::set-env name=OBS_GIT_TAG::$(git describe --tags --abbrev=0)
+          echo "OBS_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
+          echo "OBS_GIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "OBS_GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
       - name: "Checkout last OBS-Studio release (${{ env.OBS_GIT_TAG }})"
         shell: bash
         working-directory: ${{ github.workspace }}/obs-studio
@@ -52,9 +50,9 @@ jobs:
         working-directory: ${{ github.workspace }}/obs-virtual-cam
         run: |
           git fetch --prune --unshallow
-          echo ::set-env name=GIT_BRANCH::${{ github.event.pull_request.head.ref }}
-          echo ::set-env name=GIT_HASH::$(git rev-parse --short HEAD)
-          echo ::set-env name=GIT_TAG::$(git describe --tags --abbrev=0)
+          echo "GIT_BRANCH=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
+          echo "GIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "GIT_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
       - name: "Install prerequisite: QT"
         run: |
           curl -kLO https://github.com/obsproject/obs-deps/releases/download/${{ env.OBS_DEPS }}/windows-deps-qt6-${{ env.OBS_DEPS }}-x64.zip -f --retry 5 -C -
@@ -65,7 +63,7 @@ jobs:
           7z x windows-deps-${{ env.OBS_DEPS }}-x64.zip -o"${{ github.workspace }}\cmbuild\deps"
       - name: "Restore OBS 64-bit build v${{ env.OBS_GIT_TAG }} from cache"
         id: build-cache-obs-64
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         env:
           CACHE_NAME: "build-cache-obs-64"
         with:
@@ -100,7 +98,7 @@ jobs:
         shell: bash
         run: |
           FILENAME="OBS-Virtualcam-${{ env.GIT_TAG }}-Windows"
-          echo "::set-env name=WIN_FILENAME::$FILENAME"
+          echo "WIN_FILENAME=$FILENAME" >> $GITHUB_ENV
       - name: "Package obs-virtual-cam"
         working-directory: ${{ github.workspace }}/obs-virtual-cam
         run: |
@@ -127,13 +125,13 @@ jobs:
           makensis /DVERSION=${{ env.GIT_TAG }} installer.nsi
       - name: "Publish ${{ env.WIN_FILENAME }}.zip"
         if: success()
-        uses: actions/upload-artifact@v2-preview
+        uses: actions/upload-artifact@v4
         with:
           name: "${{ env.GIT_TAG }}-Windows"
           path: ${{ github.workspace }}\obs-virtual-cam\release\*.zip
       - name: "Publish ${{ env.WIN_FILENAME }}-Windows-Installer.exe"
         if: success()
-        uses: actions/upload-artifact@v2-preview
+        uses: actions/upload-artifact@v4
         with:
           name: "${{ env.GIT_TAG }}-Windows-Installer"
           path: ${{ github.workspace }}\obs-virtual-cam\build-package\*.exe
